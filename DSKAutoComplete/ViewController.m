@@ -42,7 +42,7 @@
 	};
 	[DSKAutoComplete handleTextField:self.textField
 	                  withDataSource:listDictionary
-	                           style:DSKAutoCompleteStylek];
+	                           style:DSKAutoCompleteStyleDropDown];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

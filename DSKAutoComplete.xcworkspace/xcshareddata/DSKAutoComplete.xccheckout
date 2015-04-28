@@ -10,14 +10,14 @@
 	<string>DSKAutoComplete</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>14FF9D63A7A3686CC393D04B933F56721572B6B6</key>
+		<key>503F7B6EFAAD8134E216B05F16BF648D276517F2</key>
 		<string>https://github.com/dse12345z/DSKAutoComplete.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>DSKAutoComplete.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>14FF9D63A7A3686CC393D04B933F56721572B6B6</key>
+		<key>503F7B6EFAAD8134E216B05F16BF648D276517F2</key>
 		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>14FF9D63A7A3686CC393D04B933F56721572B6B6</string>
+	<string>503F7B6EFAAD8134E216B05F16BF648D276517F2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>14FF9D63A7A3686CC393D04B933F56721572B6B6</string>
+			<string>503F7B6EFAAD8134E216B05F16BF648D276517F2</string>
 			<key>IDESourceControlWCCName</key>
 			<string>DSKAutoComplete</string>
 		</dict>

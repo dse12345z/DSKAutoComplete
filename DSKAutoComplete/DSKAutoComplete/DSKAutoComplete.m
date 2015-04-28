@@ -10,7 +10,7 @@
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
 
-#define textFieldStyle [self DSKAutoCompleteQuickMenu].tfDictionary[NSValue(textField)][@"style"]
+#define textFieldStyle ((NSNumber *)[self DSKAutoCompleteQuickMenu].tfDictionary[NSValue(textField)][@"style"]).intValue
 
 @interface DSKAutoComplete ()
 
