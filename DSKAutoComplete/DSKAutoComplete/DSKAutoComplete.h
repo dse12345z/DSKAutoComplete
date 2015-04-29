@@ -8,14 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import "DSKAutoCompleteProtocol.h"
 
-typedef enum {
-	DSKAutoCompleteStyleDropDown,
-	DSKAutoCompleteStyleKeyboard,
-} DSKAutoCompleteStyle;
-
-@interface DSKAutoComplete : NSObject
-
-+ (void)handleTextField:(UITextField *)textField withDataSource:(NSDictionary *)dictionary style:(DSKAutoCompleteStyle)style;
-+ (void)cacheClear;
+@interface DSKAutoComplete : NSObject <DSKAutoCompleteProtocol>
++ (void)handleTextField:(UITextField *)textField;
 @end

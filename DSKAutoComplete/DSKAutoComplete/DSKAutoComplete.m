@@ -9,8 +9,7 @@
 #import "DSKAutoComplete.h"
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
-
-#define textFieldStyle ((NSNumber *)[self DSKAutoCompleteQuickMenu].tfDictionary[NSValue(textField)][@"style"]).intValue
+#import <objc/message.h>
 
 @interface DSKAutoComplete ()
 
@@ -20,19 +19,9 @@
 
 #pragma mark - class method
 
-+ (void)handleTextField:(UITextField *)textField withDataSource:(NSDictionary *)dictionary style:(DSKAutoCompleteStyle)style {
++ (void)handleTextField:(UITextField *)textField {
 	textField.delegate = (id <UITextFieldDelegate> )self;
 	[textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-
-	//新增一個 textField 資訊
-	[self DSKAutoCompleteQuickMenu].tfDictionary[NSValue(textField)] = @{ @"textField":textField,
-		                                                                  @"style":@(style),
-		                                                                  @"dataSource":dictionary };
-}
-
-//刪除內存
-+ (void)cacheClear {
-	[[self DSKAutoCompleteQuickMenu].tfDictionary removeAllObjects];
 }
 
 #pragma msrk - DSKAutoCompleteTableViewDelegate
@@ -45,14 +34,8 @@
 #pragma mark - UITextField Delegate
 
 + (void)textFieldDidBeginEditing:(UITextField *)textField {
-	//textField 響應後才創建 tableView menu，依照當初設定的 style 創建。
-
-	if (textFieldStyle == DSKAutoCompleteStyleDropDown) {
-		[[self DSKAutoCompleteQuickMenu] setTableviewStyleDropDown:textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )self];
-	}
-	else {
-		[[self DSKAutoCompleteQuickMenu] setTableviewStyleKeyboard:textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )self];
-	}
+	//textField 響應後才創建 tableView menu。
+	[[self DSKAutoCompleteQuickMenu] setTableview:textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )self];
 }
 
 + (BOOL)textFieldShouldReturn:(UITextField *)textField {

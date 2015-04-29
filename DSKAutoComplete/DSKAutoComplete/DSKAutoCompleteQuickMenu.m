@@ -9,30 +9,19 @@
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
 
-#define textFieldDic self.tfDictionary[NSValue(self.respondTextField)]
+#define textFieldDataSource (NSDictionary *)[self.respondTextField valueForKey:@"dataDictionary"]
 
 @interface DSKAutoCompleteQuickMenu ()
 @property (nonatomic, strong) NSArray *array;
+@property (nonatomic, weak) id <DSKAutoCompleteQuickMenuDelegate> delegate;
 @end
 
 @implementation DSKAutoCompleteQuickMenu
 
-- (id)init {
-	self = [super init];
-	if (self) {
-		self.tfDictionary = [NSMutableDictionary dictionary];
-	}
-	return self;
-}
-
 #pragma mark - instance method
 
-- (void)setTableviewStyleDropDown:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate {
-	[self setTableviewWithTextField:textField delegate:delegate isStyleDropDown:YES];
-}
-
-- (void)setTableviewStyleKeyboard:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate {
-	[self setTableviewWithTextField:textField delegate:delegate isStyleDropDown:NO];
+- (void)setTableview:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate {
+	[self setTableview:textField delegate:delegate style:textFieldStyle];
 }
 
 - (void)tableViewDropDownAnimateHidden {
@@ -51,11 +40,11 @@
 - (void)upDateReload {
 	if (self.respondTextField.text.length != 0) {
 		//用來保存需要的 key。
-		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:textFieldDic[@"dataSource"]];
+		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:textFieldDataSource];
 
 		__weak typeof(self) weakSelf = self;
 
-		[textFieldDic[@"dataSource"] keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
+		[textFieldDataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
 		    //建立模糊搜尋語法。
 		    NSString *predicateStr = @"SELF like[cd] '*";
 		    for (int i = 0; i < weakSelf.respondTextField.text.length; i++) {
@@ -90,7 +79,7 @@
 
 #pragma mark - private method
 
-- (void)setTableviewWithTextField:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate isStyleDropDown:(BOOL)isDropDown {
+- (void)setTableview:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate style:(DSKAutoCompleteStyle)style {
 	self.delegate = delegate;
 
 	[self.tableView removeFromSuperview];
@@ -109,8 +98,8 @@
 
 	//按照 Style 設置 tableView
 	CGRect newFrame = textField.frame;
-	if (isDropDown) {
-		newFrame.origin.y += textField.frame.size.height - 3;
+	if (style == DSKAutoCompleteStyleDropDown) {
+		newFrame.origin.y += textField.frame.size.height - 10;
 		newFrame.size.height = 0;
 		self.tableView.frame = newFrame;
 
@@ -158,7 +147,11 @@
 - (void)tableViewDropDownAnimateShow {
 	__weak typeof(self) weakSelf = self;
 
-	[UIView animateWithDuration:0.2
+	[UIView animateWithDuration:0.2f
+	                      delay:0.0f
+	     usingSpringWithDamping:0.2f    //0.0f ~ 1.0f，數值越小，彈簧振幅越大。
+	      initialSpringVelocity:15.0f   //數值越大移動速度越快。
+	                    options:UIViewAnimationOptionCurveEaseOut
 	                 animations: ^{
 	    CGRect newFrame = weakSelf.tableView.frame;
 	    newFrame.size.height = DSKQuicklyMenuHeight;
@@ -176,6 +169,16 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return 30;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+	UIView *headerView = [UIView new];
+	headerView.backgroundColor = [UIColor clearColor];
+	return headerView;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+	return 5;
 }
 
 #pragma mark - tableView DataSource
