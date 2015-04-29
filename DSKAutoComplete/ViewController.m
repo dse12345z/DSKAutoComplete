@@ -46,6 +46,7 @@
 	NSDictionary *dictionary2 = @{ @"水族館" :@{ @"item":@[@"水族館", @"魚"],
 									          @"weight": @(0.9) }
 	};
+	self.autoCompleteTextField2.style = DSKAutoCompleteStyleKeyboard;
 	self.autoCompleteTextField2.dataDictionary = dictionary2;
 }
 

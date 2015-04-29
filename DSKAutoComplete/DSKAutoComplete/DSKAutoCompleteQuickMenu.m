@@ -9,19 +9,44 @@
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
 
-#define textFieldDataSource (NSDictionary *)[self.respondTextField valueForKey:@"dataDictionary"]
+#define textField ((UITextField *)self.delegate)
+#define weakTextField ((UITextField *)weakSelf.delegate)
 
 @interface DSKAutoCompleteQuickMenu ()
 @property (nonatomic, strong) NSArray *array;
-@property (nonatomic, weak) id <DSKAutoCompleteQuickMenuDelegate> delegate;
 @end
 
 @implementation DSKAutoCompleteQuickMenu
 
 #pragma mark - instance method
 
-- (void)setTableview:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate {
-	[self setTableview:textField delegate:delegate style:textFieldStyle];
+- (void)setTableviewWithStyle:(BOOL)isKeyboard {
+	[self.tableView removeFromSuperview];
+	self.tableView = nil;
+	self.tableView = [UITableView new];
+	self.tableView.delegate = self;
+	self.tableView.dataSource = self;
+	self.tableView.layer.borderWidth = 0.5;
+	self.tableView.layer.cornerRadius = 5.0;
+	self.tableView.layer.borderColor = [UIColor grayColor].CGColor;
+	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+	//按照 Style 設置 tableView
+	CGRect newFrame = textField.frame;
+	if (isKeyboard) {
+		newFrame.size.height = DSKQuicklyMenuHeight;
+		self.tableView.frame = newFrame;
+		textField.inputAccessoryView = self.tableView;
+	}
+	else {
+		newFrame.origin.y += textField.frame.size.height - 10;
+		newFrame.size.height = 0;
+		self.tableView.frame = newFrame;
+
+		[textField.superview addSubview:self.tableView];
+		[textField.superview bringSubviewToFront:textField];
+		[self tableViewDropDownAnimateShow];
+	}
 }
 
 - (void)tableViewDropDownAnimateHidden {
@@ -37,18 +62,18 @@
 	}];
 }
 
-- (void)upDateReload {
-	if (self.respondTextField.text.length != 0) {
+- (void)upDateReload:(NSDictionary *)dataSource {
+	if (textField.text.length != 0) {
 		//用來保存需要的 key。
-		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:textFieldDataSource];
+		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
 
 		__weak typeof(self) weakSelf = self;
 
-		[textFieldDataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
+		[dataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
 		    //建立模糊搜尋語法。
 		    NSString *predicateStr = @"SELF like[cd] '*";
-		    for (int i = 0; i < weakSelf.respondTextField.text.length; i++) {
-		        predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [weakSelf.respondTextField.text substringWithRange:NSMakeRange(i, 1)]];
+		    for (int i = 0; i < weakTextField.text.length; i++) {
+		        predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [weakTextField.text substringWithRange:NSMakeRange(i, 1)]];
 			}
 		    predicateStr = [NSString stringWithFormat:@"%@'", predicateStr];
 		    NSPredicate *pred = [NSPredicate predicateWithFormat:predicateStr];
@@ -78,42 +103,6 @@
 }
 
 #pragma mark - private method
-
-- (void)setTableview:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate style:(DSKAutoCompleteStyle)style {
-	self.delegate = delegate;
-
-	[self.tableView removeFromSuperview];
-	self.tableView = nil;
-	self.tableView = [UITableView new];
-	self.tableView.delegate = self;
-	self.tableView.dataSource = self;
-	self.tableView.layer.borderWidth = 0.5;
-	self.tableView.layer.cornerRadius = 5.0;
-	self.tableView.layer.borderColor = [UIColor grayColor].CGColor;
-	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-	self.respondTextField = textField;
-	self.respondTextField.returnKeyType = UIReturnKeyDone;
-	self.respondTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-	self.respondTextField.autocorrectionType = UITextAutocorrectionTypeNo;
-
-	//按照 Style 設置 tableView
-	CGRect newFrame = textField.frame;
-	if (style == DSKAutoCompleteStyleDropDown) {
-		newFrame.origin.y += textField.frame.size.height - 10;
-		newFrame.size.height = 0;
-		self.tableView.frame = newFrame;
-
-		[textField.superview addSubview:self.tableView];
-		[textField.superview bringSubviewToFront:textField];
-		[self tableViewDropDownAnimateShow];
-	}
-	else {
-		newFrame.size.height = DSKQuicklyMenuHeight;
-		self.tableView.frame = newFrame;
-		self.respondTextField.inputAccessoryView = self.tableView;
-	}
-	[self upDateReload];
-}
 
 - (NSMutableAttributedString *)drawColorString:(NSString *)oStr ruleString:(NSString *)rStr {
 	NSMutableAttributedString *dataStr = [[NSMutableAttributedString alloc] initWithString:oStr];
@@ -197,9 +186,9 @@
 	if (!cell) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	}
-	if (self.respondTextField.text.length != 0) {
+	if (textField.text.length != 0) {
 		NSAttributedString *colorString = [self drawColorString:self.array[indexPath.row]
-		                                             ruleString:self.respondTextField.text];
+		                                             ruleString:textField.text];
 		cell.textLabel.attributedText = colorString;
 	}
 	else {

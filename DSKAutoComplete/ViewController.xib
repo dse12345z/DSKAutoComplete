@@ -6,8 +6,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ViewController">
             <connections>
-                <outlet property="autoCompleteTextField" destination="rgw-We-AbV" id="Qxi-Cb-jZt"/>
-                <outlet property="autoCompleteTextField2" destination="D9T-eX-0Cc" id="OcG-ZX-Xc6"/>
+                <outlet property="autoCompleteTextField" destination="rgw-We-AbV" id="rQL-MO-CvF"/>
+                <outlet property="autoCompleteTextField2" destination="D9T-eX-0Cc" id="f8v-mV-WCi"/>
                 <outlet property="view" destination="iN0-l3-epB" id="wgq-jF-FDy"/>
             </connections>
         </placeholder>
@@ -31,7 +31,7 @@
                     </connections>
                 </button>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="D9T-eX-0Cc" customClass="DSKAutoCompleteTextField">
-                    <rect key="frame" x="60" y="214" width="200" height="30"/>
+                    <rect key="frame" x="60" y="166" width="200" height="30"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>

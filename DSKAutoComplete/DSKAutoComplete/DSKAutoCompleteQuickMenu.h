@@ -6,23 +6,20 @@
 //  Copyright (c) 2015年 guante_lu. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "DSKAutoCompleteProtocol.h"
 
-#define textFieldStyle  ((NSNumber *)[textField valueForKey:@"style"]).intValue
 #define DSKQuicklyMenuHeight 90
 
 @protocol DSKAutoCompleteQuickMenuDelegate;
 
-@interface DSKAutoCompleteQuickMenu : NSObject <UITableViewDelegate, UITableViewDataSource, DSKAutoCompleteProtocol>
+@interface DSKAutoCompleteQuickMenu : NSObject <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) UITextField *respondTextField;
+@property (nonatomic, weak) id <DSKAutoCompleteQuickMenuDelegate> delegate;
 
-- (void)setTableview:(UITextField *)textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )delegate;
+- (void)setTableviewWithStyle:(BOOL)isKeyboard;
 - (void)tableViewDropDownAnimateHidden;
-- (void)upDateReload;
+- (void)upDateReload:(NSDictionary *)dataSource;
 @end
 
 @protocol DSKAutoCompleteQuickMenuDelegate <NSObject>
