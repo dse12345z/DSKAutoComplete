@@ -65,7 +65,7 @@
 		    NSPredicate *pred = [NSPredicate predicateWithFormat:predicateStr];
 
 		    //模糊搜尋 array 裡的每個 string，count > 0 表示這個 key 是需要的。
-		    if ([[info[@"item"] filteredArrayUsingPredicate:pred] count] > 0) {
+		    if ([info[@"item"] filteredArrayUsingPredicate:pred].count > 0) {
 		        return YES;
 			}
 
@@ -75,7 +75,7 @@
 		}];
 
 		//將所有 key 按照權重排序。
-		if ([cacheDic allKeys] > 0) {
+		if (cacheDic.allKeys > 0) {
 			NSArray *sortedKeys = [cacheDic keysSortedByValueUsingComparator: ^NSComparisonResult (id obj1, id obj2) {
 			    return [obj2[@"weight"] compare:obj1[@"weight"]];
 			}];
@@ -185,19 +185,19 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return [self.array count];
+	return self.array.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	static NSString *cellIdentifier = @"DSKAutoCompleteQuickMenu";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (!cell) {
-		cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	}
 	if (self.respondTextField.text.length != 0) {
 		NSAttributedString *colorString = [self drawColorString:self.array[indexPath.row]
 		                                             ruleString:self.respondTextField.text];
-		[cell.textLabel setAttributedText:colorString];
+		cell.textLabel.attributedText = colorString;
 	}
 	else {
 		cell.textLabel.textColor = [UIColor blackColor];

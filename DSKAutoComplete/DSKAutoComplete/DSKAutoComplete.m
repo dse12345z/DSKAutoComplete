@@ -47,7 +47,6 @@
 + (void)textFieldDidBeginEditing:(UITextField *)textField {
 	//textField 響應後才創建 tableView menu，依照當初設定的 style 創建。
 
-
 	if (textFieldStyle == DSKAutoCompleteStyleDropDown) {
 		[[self DSKAutoCompleteQuickMenu] setTableviewStyleDropDown:textField delegate:(id <DSKAutoCompleteQuickMenuDelegate> )self];
 	}
