@@ -11,8 +11,8 @@
 #define DSKQuicklyMenuHeight 90
 
 typedef enum {
-    DSKAutoCompleteStyleDropDown,
-    DSKAutoCompleteStyleKeyboard,
+    DSKAutoCompleteStyleDropDown = 1,
+    DSKAutoCompleteStyleKeyboard = 2,
 } DSKAutoCompleteStyle;
 
 @protocol DSKAutoCompleteQuickMenuDelegate;
