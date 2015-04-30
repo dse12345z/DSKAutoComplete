@@ -7,13 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DSKAutoCompleteDropDownMenu.h"
+#import "DSKAutoCompleteKeyboardMenu.h"
 
-typedef enum {
-	DSKAutoCompleteStyleDropDown, //default
-	DSKAutoCompleteStyleKeyboard,
-} DSKAutoCompleteStyle;
-
-@interface DSKAutoCompleteTextField : UITextField <UITextFieldDelegate>
-@property (nonatomic, strong) NSDictionary *dataDictionary;
+@interface DSKAutoCompleteTextField : UITextField <UITextFieldDelegate, DSKAutoCompleteQuickMenuDelegate>
+@property (nonatomic, strong) NSDictionary *dataSource;
 @property (nonatomic, assign) DSKAutoCompleteStyle style;
 @end

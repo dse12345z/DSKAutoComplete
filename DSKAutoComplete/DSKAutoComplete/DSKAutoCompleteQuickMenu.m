@@ -9,61 +9,43 @@
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
 
-#define textField ((UITextField *)self.delegate)
-#define weakTextField ((UITextField *)weakSelf.delegate)
+#define DSKQuicklyMenuHeight 90
 
 @interface DSKAutoCompleteQuickMenu ()
-@property (nonatomic, strong) NSArray *array;
+@property (nonatomic, strong) NSArray *results;
 @end
 
 @implementation DSKAutoCompleteQuickMenu
 
+- (UITextField *)currentTextField {
+    return (UITextField *)self.delegate;
+}
+
 #pragma mark - instance method
 
-- (void)setTableviewWithStyle:(BOOL)isKeyboard {
-	[self.tableView removeFromSuperview];
-	self.tableView = nil;
-	self.tableView = [UITableView new];
-	self.tableView.delegate = self;
-	self.tableView.dataSource = self;
-	self.tableView.layer.borderWidth = 0.5;
-	self.tableView.layer.cornerRadius = 5.0;
-	self.tableView.layer.borderColor = [UIColor grayColor].CGColor;
-	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-
-	//按照 Style 設置 tableView
-	CGRect newFrame = textField.frame;
-	if (isKeyboard) {
-		newFrame.size.height = DSKQuicklyMenuHeight;
-		self.tableView.frame = newFrame;
-		textField.inputAccessoryView = self.tableView;
-	}
-	else {
-		newFrame.origin.y += textField.frame.size.height - 10;
-		newFrame.size.height = 0;
-		self.tableView.frame = newFrame;
-
-		[textField.superview addSubview:self.tableView];
-		[textField.superview bringSubviewToFront:textField];
-		[self tableViewDropDownAnimateShow];
-	}
+- (void)tableviewWithStyle:(DSKAutoCompleteStyle)style {
+	[self.quickMenu removeFromSuperview];
+	self.quickMenu = nil;
+	self.quickMenu = [UITableView new];
+	self.quickMenu.delegate = self;
+	self.quickMenu.dataSource = self;
+	self.quickMenu.layer.borderWidth = 0.5;
+	self.quickMenu.layer.cornerRadius = 5.0;
+	self.quickMenu.layer.borderColor = [UIColor grayColor].CGColor;
+	self.quickMenu.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.quickMenu registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DSKAutoCompleteQuickMenu"];
 }
 
-- (void)tableViewDropDownAnimateHidden {
-	__weak typeof(self) weakSelf = self;
-
-	[UIView animateWithDuration:0.2
-	                 animations: ^{
-	    CGRect newFrame = weakSelf.tableView.frame;
-	    newFrame.size.height = 0;
-	    weakSelf.tableView.frame = newFrame;
-	}
-	                 completion: ^(BOOL finished) {
-	}];
+- (void)hidden {
+    NSAssert(0, @"you must override this method");
 }
 
-- (void)upDateReload:(NSDictionary *)dataSource {
-	if (textField.text.length != 0) {
+- (void)show {
+    NSAssert(0, @"you must override this method");
+}
+
+- (void)refreshDataUsing:(NSDictionary *)dataSource {
+	if ([self currentTextField].text.length != 0) {
 		//用來保存需要的 key。
 		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
 
@@ -72,8 +54,8 @@
 		[dataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
 		    //建立模糊搜尋語法。
 		    NSString *predicateStr = @"SELF like[cd] '*";
-		    for (int i = 0; i < weakTextField.text.length; i++) {
-		        predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [weakTextField.text substringWithRange:NSMakeRange(i, 1)]];
+		    for (int i = 0; i < weakSelf.currentTextField.text.length; i++) {
+		        predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [[weakSelf currentTextField].text substringWithRange:NSMakeRange(i, 1)]];
 			}
 		    predicateStr = [NSString stringWithFormat:@"%@'", predicateStr];
 		    NSPredicate *pred = [NSPredicate predicateWithFormat:predicateStr];
@@ -93,13 +75,13 @@
 			NSArray *sortedKeys = [cacheDic keysSortedByValueUsingComparator: ^NSComparisonResult (id obj1, id obj2) {
 			    return [obj2[@"weight"] compare:obj1[@"weight"]];
 			}];
-			self.array = sortedKeys;
+			self.results = sortedKeys;
 		}
 	}
 	else {
-		self.array = [NSArray array];
+		self.results = [NSArray array];
 	}
-	[self.tableView reloadData];
+	[self.quickMenu reloadData];
 }
 
 #pragma mark - private method
@@ -133,27 +115,10 @@
 	return dataStr;
 }
 
-- (void)tableViewDropDownAnimateShow {
-	__weak typeof(self) weakSelf = self;
-
-	[UIView animateWithDuration:0.2f
-	                      delay:0.0f
-	     usingSpringWithDamping:0.2f    //0.0f ~ 1.0f，數值越小，彈簧振幅越大。
-	      initialSpringVelocity:15.0f   //數值越大移動速度越快。
-	                    options:UIViewAnimationOptionCurveEaseOut
-	                 animations: ^{
-	    CGRect newFrame = weakSelf.tableView.frame;
-	    newFrame.size.height = DSKQuicklyMenuHeight;
-	    weakSelf.tableView.frame = newFrame;
-	}
-	                 completion: ^(BOOL finished) {
-	}];
-}
-
 #pragma mark - tableView Delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	[self.delegate tableViewDidSelect:self.array[indexPath.row]];
+	[self.delegate tableViewDidSelect:self.results[indexPath.row]];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -177,23 +142,20 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return self.array.count;
+	return self.results.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	static NSString *cellIdentifier = @"DSKAutoCompleteQuickMenu";
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-	if (!cell) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-	}
-	if (textField.text.length != 0) {
-		NSAttributedString *colorString = [self drawColorString:self.array[indexPath.row]
-		                                             ruleString:textField.text];
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+	if ([self currentTextField].text.length != 0) {
+		NSAttributedString *colorString = [self drawColorString:self.results[indexPath.row]
+		                                             ruleString:[self currentTextField].text];
 		cell.textLabel.attributedText = colorString;
 	}
 	else {
 		cell.textLabel.textColor = [UIColor blackColor];
-		cell.textLabel.text = self.array[indexPath.row];
+		cell.textLabel.text = self.results[indexPath.row];
 	}
 	return cell;
 }

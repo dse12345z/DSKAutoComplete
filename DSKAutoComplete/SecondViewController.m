@@ -22,7 +22,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	self.autoCompleteTextField.style = DSKAutoCompleteStyleKeyboard;
-	self.autoCompleteTextField.dataDictionary = @{ @"一樂拉麵" :@{ @"item":@[@"一樂拉麵", @"麵", @"肉", @"豬肉", @"牛肉", @"羊肉"],
+	self.autoCompleteTextField.dataSource = @{ @"一樂拉麵" :@{ @"item":@[@"一樂拉麵", @"麵", @"肉", @"豬肉", @"牛肉", @"羊肉"],
 													           @"weight": @(0.9) },
 		                                           @"燒肉蓋飯" :@{ @"item":@[@"燒肉蓋飯", @"飯", @"肉", @"豬肉", @"牛肉", @"羊肉"],
 													           @"weight": @(0.2) },

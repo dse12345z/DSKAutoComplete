@@ -10,16 +10,23 @@
 
 #define DSKQuicklyMenuHeight 90
 
+typedef enum {
+    DSKAutoCompleteStyleDropDown,
+    DSKAutoCompleteStyleKeyboard,
+} DSKAutoCompleteStyle;
+
 @protocol DSKAutoCompleteQuickMenuDelegate;
 
 @interface DSKAutoCompleteQuickMenu : NSObject <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, weak) id <DSKAutoCompleteQuickMenuDelegate> delegate;
+@property (nonatomic, strong) UITableView *quickMenu;
 
-- (void)setTableviewWithStyle:(BOOL)isKeyboard;
-- (void)tableViewDropDownAnimateHidden;
-- (void)upDateReload:(NSDictionary *)dataSource;
+- (void)tableviewWithStyle:(DSKAutoCompleteStyle)style;
+- (UITextField *)currentTextField;
+- (void)show;
+- (void)hidden;
+- (void)refreshDataUsing:(NSDictionary *)dataSource;
 @end
 
 @protocol DSKAutoCompleteQuickMenuDelegate <NSObject>
