@@ -1,0 +1,18 @@
+//
+//  DSKAutoComplete.pch
+//  DSKAutoComplete
+//
+//  Created by daisuke on 2015/4/30.
+//  Copyright (c) 2015年 dse12345z. All rights reserved.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#end

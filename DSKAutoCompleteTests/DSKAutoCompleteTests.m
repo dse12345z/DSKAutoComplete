@@ -1,40 +1,70 @@
 //
 //  DSKAutoCompleteTests.m
-//  DSKAutoCompleteTests
+//  DSKAutoComplete
 //
-//  Created by daisuke on 2015/4/28.
+//  Created by daisuke on 2015/4/30.
 //  Copyright (c) 2015年 dse12345z. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import <KIF/KIF.h>
 
-@interface DSKAutoCompleteTests : XCTestCase
+@interface DSKAutoCompleteTests : KIFTestCase
 
 @end
 
 @implementation DSKAutoCompleteTests
 
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+- (void)beforeEach {
+	[tester waitForTimeInterval:10.0f];
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
+- (void)afterEach {
+	[tester waitForTimeInterval:6.0f];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+- (void)testEnterText {
+	[tester tapViewWithAccessibilityLabel:@"TextFieldTests"];
+	[tester clearTextFromFirstResponder];
+	[tester waitForTimeInterval:1.0f];
+
+	[self enterText:@[@"肉", @"類", @"專", @"賣", @"店"]];
+	[tester tapViewWithAccessibilityLabel:@"確認"];
+	[tester tapViewWithAccessibilityLabel:@"完成"];
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+- (void)testAutoComplete {
+	[tester tapViewWithAccessibilityLabel:@"TextFieldTests2"];
+	[tester clearTextFromFirstResponder];
+	[tester waitForTimeInterval:1.0f];
+
+	[self enterText:@[@"水"]];
+
+	[tester waitForTimeInterval:1.0f];
+	[tester tapViewWithAccessibilityLabel:@"水族館遊樂園"];
+	[tester waitForTimeInterval:2.0f];
+	[tester tapViewWithAccessibilityLabel:@"完成"];
+}
+
+- (void)testTag {
+	[tester tapViewWithAccessibilityLabel:@"TextFieldTests"];
+	[tester clearTextFromFirstResponder];
+	[tester waitForTimeInterval:1.0f];
+
+	[self enterText:@[@"肉"]];
+	[tester waitForTimeInterval:1.0f];
+	[tester tapViewWithAccessibilityLabel:@"一樂拉麵"];
+	[tester tapViewWithAccessibilityLabel:@"完成"];
+}
+
+#pragma mark - private
+
+- (void)enterText:(NSArray *)wordArray {
+	for (NSString *str in wordArray) {
+		[tester enterTextIntoCurrentFirstResponder:str];
+		[tester waitForTimeInterval:0.5f];
+	}
 }
 
 @end

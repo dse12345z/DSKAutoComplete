@@ -40,15 +40,17 @@
 		                          @"汽車貸款" :@{ @"item":@[@"汽車貸款", @"中古汽車買賣店", @"車"],
 									          @"weight": @(1.0) }
 	};
-    self.autoCompleteTextField.style = DSKAutoCompleteStyleDropDown;
+	self.autoCompleteTextField.style = DSKAutoCompleteStyleDropDown;
 	self.autoCompleteTextField.dataSource = dictionary;
+	self.autoCompleteTextField.accessibilityLabel = @"TextFieldTests";
 
 
-	NSDictionary *dictionary2 = @{ @"水族館" :@{ @"item":@[@"水族館", @"魚"],
+	NSDictionary *dictionary2 = @{ @"水族館遊樂園" :@{ @"item":@[@"水族館遊樂園", @"魚"],
 									          @"weight": @(0.9) }
 	};
 	self.autoCompleteTextField2.style = DSKAutoCompleteStyleKeyboard;
 	self.autoCompleteTextField2.dataSource = dictionary2;
+	self.autoCompleteTextField2.accessibilityLabel = @"TextFieldTests2";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
