@@ -14,5 +14,5 @@
 @property (nonatomic, strong) NSMutableDictionary *dataSource;
 @property (nonatomic, assign) DSKAutoCompleteStyle style;
 
-- (void)setDataSourceItemTag:(NSString *)tag item:(NSArray *)item weight:(NSNumber *)weight;
+- (void)setItem:(NSString *)item tags:(NSArray *)tags weight:(NSNumber *)weight;
 @end

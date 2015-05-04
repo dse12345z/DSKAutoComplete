@@ -61,7 +61,7 @@
 		    NSPredicate *pred = [NSPredicate predicateWithFormat:predicateStr];
 
 		    //模糊搜尋 array 裡的每個 string，count > 0 表示這個 key 是需要的。
-		    if ([info[@"item"] filteredArrayUsingPredicate:pred].count > 0) {
+		    if ([info[@"tags"] filteredArrayUsingPredicate:pred].count > 0) {
 		        return YES;
 			}
 

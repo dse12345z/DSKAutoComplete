@@ -38,8 +38,8 @@
 
 #pragma mark - instance method
 
-- (void)setDataSourceItemTag:(NSString *)tag item:(NSArray *)item weight:(NSNumber *)weight {
-    self.dataSource[tag] = @{ @"item":item, @"weight":weight };
+- (void)setItem:(NSString *)item tags:(NSArray *)tags weight:(NSNumber *)weight {
+    self.dataSource[item] = @{ @"tags":tags, @"weight":weight };
 }
 
 #pragma mark - kvo

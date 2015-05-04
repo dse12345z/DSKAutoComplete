@@ -26,27 +26,27 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 
-	[self.autoCompleteTextField setDataSourceItemTag:@"一樂拉麵"
-	                                            item:@[@"一樂拉麵", @"麵", @"肉", @"豬肉", @"牛肉", @"羊肉"]
-	                                          weight:@(0.9)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"燒肉蓋飯"
-	                                            item:@[@"燒肉蓋飯", @"飯", @"肉", @"豬肉", @"牛肉", @"羊肉"]
-	                                          weight:@(0.2)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"肉類專賣店"
-	                                            item:@[@"肉類專賣店", @"肉", @"豬肉", @"牛肉", @"羊肉"]
-	                                          weight:@(0.5)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"可麗餅"
-	                                            item:@[@"可麗餅", @"點心", @"甜點"]
-	                                          weight:@(0.5)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"車輪餅"
-	                                            item:@[@"車輪餅", @"點心", @"甜點"]
-	                                          weight:@(0.5)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"中古汽車買賣店"
-	                                            item:@[@"中古汽車買賣店", @"車"]
-	                                          weight:@(0.5)];
-	[self.autoCompleteTextField setDataSourceItemTag:@"汽車貸款"
-	                                            item:@[@"汽車貸款", @"中古汽車買賣店", @"車"]
-	                                          weight:@(0.5)];
+	[self.autoCompleteTextField setItem:@"一樂拉麵"
+                                   tags:@[@"一樂拉麵", @"麵", @"肉", @"豬肉", @"牛肉", @"羊肉"]
+                                 weight:@(0.9)];
+	[self.autoCompleteTextField setItem:@"燒肉蓋飯"
+                                   tags:@[@"燒肉蓋飯", @"飯", @"肉", @"豬肉", @"牛肉", @"羊肉"]
+                                 weight:@(0.2)];
+	[self.autoCompleteTextField setItem:@"肉類專賣店"
+                                   tags:@[@"肉類專賣店", @"肉", @"豬肉", @"牛肉", @"羊肉"]
+                                 weight:@(0.5)];
+	[self.autoCompleteTextField setItem:@"可麗餅"
+                                   tags:@[@"可麗餅", @"點心", @"甜點"]
+                                 weight:@(0.5)];
+	[self.autoCompleteTextField setItem:@"車輪餅"
+                                   tags:@[@"車輪餅", @"點心", @"甜點"]
+                                 weight:@(0.5)];
+	[self.autoCompleteTextField setItem:@"中古汽車買賣店"
+                                   tags:@[@"中古汽車買賣店", @"車"]
+                                 weight:@(0.5)];
+	[self.autoCompleteTextField setItem:@"汽車貸款"
+                                   tags:@[@"汽車貸款", @"中古汽車買賣店", @"車"]
+                                 weight:@(0.5)];
 	self.autoCompleteTextField.style = DSKAutoCompleteStyleDropDown;
 	self.autoCompleteTextField.accessibilityLabel = @"TextFieldTests";
 
@@ -61,9 +61,9 @@
 	NSArray *itemWeight = @[@(0.5), @(0.7), @(1.0)];
 
 	for (int i = 0; i < itemTag.count; i++) {
-		[self.autoCompleteTextField2 setDataSourceItemTag:itemTag[i]
-		                                             item:itemArray[i]
-		                                           weight:itemWeight[i]];
+		[self.autoCompleteTextField2 setItem:itemTag[i]
+                                        tags:itemArray[i]
+                                      weight:itemWeight[i]];
 	}
 
 	self.autoCompleteTextField2.style = DSKAutoCompleteStyleKeyboard;
