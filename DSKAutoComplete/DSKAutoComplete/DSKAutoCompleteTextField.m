@@ -36,6 +36,12 @@
     [self removeObserver:self forKeyPath:@"style" context:nil];
 }
 
+#pragma mark - instance method
+
+- (void)setDataSourceItemTag:(NSString *)tag item:(NSArray *)item weight:(NSNumber *)weight {
+    self.dataSource[tag] = @{ @"item":item, @"weight":weight };
+}
+
 #pragma mark - kvo
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -57,8 +63,8 @@
 #pragma mark * init
 
 - (void)initSettings {
-    [self addObserver:self forKeyPath:@"style" options:NSKeyValueObservingOptionNew context:nil];
-	self.dataSource = [NSDictionary dictionary];
+	[self addObserver:self forKeyPath:@"style" options:NSKeyValueObservingOptionNew context:nil];
+	self.dataSource = [NSMutableDictionary dictionary];
 
 	self.delegate = self;
 	self.returnKeyType = UIReturnKeyDone;

@@ -26,7 +26,7 @@ typedef enum {
 - (UITextField *)currentTextField;
 - (void)show;
 - (void)hidden;
-- (void)refreshDataUsing:(NSDictionary *)dataSource;
+- (void)refreshDataUsing:(NSMutableDictionary *)dataSource;
 @end
 
 @protocol DSKAutoCompleteQuickMenuDelegate <NSObject>

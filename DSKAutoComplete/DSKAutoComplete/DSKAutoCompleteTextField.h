@@ -11,6 +11,8 @@
 #import "DSKAutoCompleteKeyboardMenu.h"
 
 @interface DSKAutoCompleteTextField : UITextField <UITextFieldDelegate, DSKAutoCompleteQuickMenuDelegate>
-@property (nonatomic, strong) NSDictionary *dataSource;
+@property (nonatomic, strong) NSMutableDictionary *dataSource;
 @property (nonatomic, assign) DSKAutoCompleteStyle style;
+
+- (void)setDataSourceItemTag:(NSString *)tag item:(NSArray *)item weight:(NSNumber *)weight;
 @end

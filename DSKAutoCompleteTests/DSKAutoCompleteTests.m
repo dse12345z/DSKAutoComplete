@@ -17,11 +17,11 @@
 @implementation DSKAutoCompleteTests
 
 - (void)beforeEach {
-	[tester waitForTimeInterval:10.0f];
+	[tester waitForTimeInterval:2.0f];
 }
 
 - (void)afterEach {
-	[tester waitForTimeInterval:6.0f];
+	[tester waitForTimeInterval:2.0f];
 }
 
 - (void)testEnterText {

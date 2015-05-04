@@ -44,7 +44,7 @@
     NSAssert(0, @"you must override this method");
 }
 
-- (void)refreshDataUsing:(NSDictionary *)dataSource {
+- (void)refreshDataUsing:(NSMutableDictionary *)dataSource {
 	if ([self currentTextField].text.length != 0) {
 		//用來保存需要的 key。
 		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
