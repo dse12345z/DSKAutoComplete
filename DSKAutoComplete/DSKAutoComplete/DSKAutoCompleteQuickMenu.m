@@ -8,17 +8,24 @@
 
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
+#import "RNQueue.h"
 
 #define DSKQuicklyMenuHeight 90
 
 @interface DSKAutoCompleteQuickMenu ()
 @property (nonatomic, strong) NSArray *results;
+
+@property (nonatomic) dispatch_semaphore_t semaphore;
+@property (nonatomic) dispatch_queue_t pendingQueue;
+@property (nonatomic) dispatch_queue_t workQueue;
+@property (nonatomic, assign) int pendingJobCount;
+
 @end
 
 @implementation DSKAutoCompleteQuickMenu
 
 - (UITextField *)currentTextField {
-    return (UITextField *)self.delegate;
+	return (UITextField *)self.delegate;
 }
 
 #pragma mark - instance method
@@ -33,55 +40,60 @@
 	self.quickMenu.layer.cornerRadius = 5.0;
 	self.quickMenu.layer.borderColor = [UIColor grayColor].CGColor;
 	self.quickMenu.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.quickMenu registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DSKAutoCompleteQuickMenu"];
+	[self.quickMenu registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DSKAutoCompleteQuickMenu"];
+
+	self.semaphore = dispatch_semaphore_create(1);
+	self.pendingQueue = RNQueueCreateTagged("ProducerConsumer.pending", DISPATCH_QUEUE_SERIAL);
+	self.workQueue = RNQueueCreateTagged("ProducerConsumer.work", DISPATCH_QUEUE_CONCURRENT);
 }
 
 - (void)hidden {
-    NSAssert(0, @"you must override this method");
+	NSAssert(0, @"you must override this method");
 }
 
 - (void)show {
-    NSAssert(0, @"you must override this method");
+	NSAssert(0, @"you must override this method");
 }
 
 - (void)refreshDataUsing:(NSMutableDictionary *)dataSource {
-	if ([self currentTextField].text.length != 0) {
-		//用來保存需要的 key。
-		NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
+	RNAssertMainQueue();
+	self.pendingJobCount++;
 
-		__weak typeof(self) weakSelf = self;
+	dispatch_async(self.pendingQueue, ^{
+		dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+		dispatch_async(self.workQueue, ^{
+			RNAssertQueue(self.workQueue);
 
-		[dataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
-		    //建立模糊搜尋語法。
-		    NSString *predicateStr = @"SELF like[cd] '*";
-		    for (int i = 0; i < weakSelf.currentTextField.text.length; i++) {
-		        predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [[weakSelf currentTextField].text substringWithRange:NSMakeRange(i, 1)]];
+			if ([self currentTextField].text.length != 0 && self.pendingJobCount == 1) {
+			    //用來保存需要的 key。
+			    NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
+
+			    NSPredicate *pred = [NSPredicate predicateWithFormat:[self predicateStr]];
+			    [dataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
+			        //模糊搜尋 array 裡的每個 string，count > 0 表示這個 key 是需要的。
+			        if ([info[@"tags"] filteredArrayUsingPredicate:pred].count > 0 && self.pendingJobCount == 1) {
+			            return YES;
+					}
+
+			        //模糊搜尋找不到，移除這個 key。
+			        [cacheDic removeObjectForKey:key];
+			        return NO;
+				}];
+
+			    if (self.pendingJobCount == 1 && cacheDic.allKeys > 0) {
+			        //將所有 key 按照權重排序。
+			        self.results = [self sortAllKeys:cacheDic];
+				}
 			}
-		    predicateStr = [NSString stringWithFormat:@"%@'", predicateStr];
-		    NSPredicate *pred = [NSPredicate predicateWithFormat:predicateStr];
+            
+            //做最後確認
+            if ([self currentTextField].text.length == 0 || self.pendingJobCount > 1) {
+			    self.results = [NSArray array];
+            }
 
-		    //模糊搜尋 array 裡的每個 string，count > 0 表示這個 key 是需要的。
-		    if ([info[@"tags"] filteredArrayUsingPredicate:pred].count > 0) {
-		        return YES;
-			}
-
-		    //模糊搜尋找不到，移除這個 key。
-		    [cacheDic removeObjectForKey:key];
-		    return NO;
-		}];
-
-		//將所有 key 按照權重排序。
-		if (cacheDic.allKeys > 0) {
-			NSArray *sortedKeys = [cacheDic keysSortedByValueUsingComparator: ^NSComparisonResult (id obj1, id obj2) {
-			    return [obj2[@"weight"] compare:obj1[@"weight"]];
-			}];
-			self.results = sortedKeys;
-		}
-	}
-	else {
-		self.results = [NSArray array];
-	}
-	[self.quickMenu reloadData];
+			[self updataUI];
+		});
+	});
 }
 
 #pragma mark - private method
@@ -113,6 +125,32 @@
 		}
 	}
 	return dataStr;
+}
+
+#pragma mark - refreshDataUsing private method
+
+- (NSArray *)sortAllKeys:(NSMutableDictionary *)cacheDic {
+	return [cacheDic keysSortedByValueUsingComparator: ^NSComparisonResult (id obj1, id obj2) {
+	    return [obj2[@"weight"] compare:obj1[@"weight"]];
+	}];
+}
+
+- (NSString *)predicateStr {
+	//建立模糊搜尋語法。
+	NSString *predicateStr = @"SELF like[cd] '*";
+	for (int i = 0; i < self.currentTextField.text.length; i++) {
+		predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [[self currentTextField].text substringWithRange:NSMakeRange(i, 1)]];
+	}
+	predicateStr = [NSString stringWithFormat:@"%@'", predicateStr];
+	return predicateStr;
+}
+
+- (void)updataUI {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self.quickMenu reloadData];
+		self.pendingJobCount--;
+		dispatch_semaphore_signal(self.semaphore);
+	});
 }
 
 #pragma mark - tableView Delegate
