@@ -8,16 +8,15 @@
 
 #import "DSKAutoCompleteQuickMenu.h"
 #import <objc/runtime.h>
-#import "RNQueue.h"
 
 #define DSKQuicklyMenuHeight 90
 
 @interface DSKAutoCompleteQuickMenu ()
-@property (nonatomic, strong) NSArray *results;
 
-@property (nonatomic) dispatch_semaphore_t semaphore;
-@property (nonatomic) dispatch_queue_t pendingQueue;
-@property (nonatomic) dispatch_queue_t workQueue;
+@property (nonatomic, strong) NSArray *results;
+@property (nonatomic, strong) dispatch_semaphore_t semaphore;
+@property (nonatomic, strong) dispatch_queue_t pendingQueue;
+@property (nonatomic, strong) dispatch_queue_t workQueue;
 @property (nonatomic, assign) int pendingJobCount;
 
 @end
@@ -43,8 +42,8 @@
 	[self.quickMenu registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DSKAutoCompleteQuickMenu"];
 
 	self.semaphore = dispatch_semaphore_create(1);
-	self.pendingQueue = RNQueueCreateTagged("ProducerConsumer.pending", DISPATCH_QUEUE_SERIAL);
-	self.workQueue = RNQueueCreateTagged("ProducerConsumer.work", DISPATCH_QUEUE_CONCURRENT);
+	self.pendingQueue = [self queueCreate:"pendingQueue" dispatchAttr:DISPATCH_QUEUE_SERIAL];
+	self.workQueue = [self queueCreate:"workQueue" dispatchAttr:DISPATCH_QUEUE_SERIAL];
 }
 
 - (void)hidden {
@@ -56,14 +55,11 @@
 }
 
 - (void)refreshDataUsing:(NSMutableDictionary *)dataSource {
-	RNAssertMainQueue();
 	self.pendingJobCount++;
 
 	dispatch_async(self.pendingQueue, ^{
 		dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
 		dispatch_async(self.workQueue, ^{
-			RNAssertQueue(self.workQueue);
-
 			if ([self currentTextField].text.length != 0 && self.pendingJobCount == 1) {
 			    //用來保存需要的 key。
 			    NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
@@ -85,11 +81,11 @@
 			        self.results = [self sortAllKeys:cacheDic];
 				}
 			}
-            
-            //做最後確認
-            if ([self currentTextField].text.length == 0 || self.pendingJobCount > 1) {
+
+			//做最後確認
+			if ([self currentTextField].text.length == 0 || self.pendingJobCount > 1) {
 			    self.results = [NSArray array];
-            }
+			}
 
 			[self updataUI];
 		});
@@ -196,6 +192,14 @@
 		cell.textLabel.text = self.results[indexPath.row];
 	}
 	return cell;
+}
+
+#pragma mark - queue create method
+
+- (dispatch_queue_t)queueCreate:(const char *)label dispatchAttr:(dispatch_queue_attr_t)attr {
+	dispatch_queue_t queue = dispatch_queue_create(label, attr);
+	dispatch_queue_set_specific(queue, _cmd, (__bridge void *)queue, NULL);
+	return queue;
 }
 
 @end

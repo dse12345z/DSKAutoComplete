@@ -20,7 +20,6 @@
 		7E1858291AF07A6300EF5781 /* DSKAutoCompleteTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E1858281AF07A6300EF5781 /* DSKAutoCompleteTextField.m */; };
 		7E18582D1AF081B400EF5781 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E18582B1AF081B400EF5781 /* SecondViewController.m */; };
 		7E18582E1AF081B400EF5781 /* SecondViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7E18582C1AF081B400EF5781 /* SecondViewController.xib */; };
-		7E20A1151AF7CFF7004ED692 /* RNQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E20A1141AF7CFF7004ED692 /* RNQueue.m */; };
 		7E79D76C1AF1FA26003DC7B7 /* DSKAutoCompleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E79D76B1AF1FA26003DC7B7 /* DSKAutoCompleteTests.m */; };
 /* End PBXBuildFile section */
 
@@ -58,8 +57,6 @@
 		7E18582A1AF081B400EF5781 /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
 		7E18582B1AF081B400EF5781 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
 		7E18582C1AF081B400EF5781 /* SecondViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SecondViewController.xib; sourceTree = "<group>"; };
-		7E20A1131AF7CFF7004ED692 /* RNQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNQueue.h; sourceTree = "<group>"; };
-		7E20A1141AF7CFF7004ED692 /* RNQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNQueue.m; sourceTree = "<group>"; };
 		7E79D76B1AF1FA26003DC7B7 /* DSKAutoCompleteTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSKAutoCompleteTests.m; sourceTree = "<group>"; };
 		7E79D76D1AF1FAAE003DC7B7 /* DSKAutoComplete.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSKAutoComplete.pch; sourceTree = "<group>"; };
 		91431B413E8AE70162F8F1EC /* libPods-DSKAutoCompleteTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DSKAutoCompleteTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,8 +160,6 @@
 		7E1858191AEF960500EF5781 /* DSKAutoComplete */ = {
 			isa = PBXGroup;
 			children = (
-				7E20A1131AF7CFF7004ED692 /* RNQueue.h */,
-				7E20A1141AF7CFF7004ED692 /* RNQueue.m */,
 				7E1858271AF07A6300EF5781 /* DSKAutoCompleteTextField.h */,
 				7E1858281AF07A6300EF5781 /* DSKAutoCompleteTextField.m */,
 				7E18581C1AEF960500EF5781 /* DSKAutoCompleteQuickMenu.h */,
@@ -330,7 +325,6 @@
 				7E1857F21AEF957800EF5781 /* main.m in Sources */,
 				7E1858291AF07A6300EF5781 /* DSKAutoCompleteTextField.m in Sources */,
 				7E18581F1AEF960500EF5781 /* DSKAutoCompleteQuickMenu.m in Sources */,
-				7E20A1151AF7CFF7004ED692 /* RNQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
