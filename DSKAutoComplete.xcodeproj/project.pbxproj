@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1C6AA04B1AF0F5CA00C2FFBB /* DSKAutoCompleteDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C6AA04A1AF0F5CA00C2FFBB /* DSKAutoCompleteDropDownMenu.m */; };
 		1C6AA04E1AF0F6A700C2FFBB /* DSKAutoCompleteKeyboardMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C6AA04D1AF0F6A700C2FFBB /* DSKAutoCompleteKeyboardMenu.m */; };
+		1CC3EDA91AFB069700AB6008 /* DSKAutoCompleteOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CC3EDA81AFB069700AB6008 /* DSKAutoCompleteOperation.m */; };
 		667B01D7CAECDFB0031B71CC /* libPods-DSKAutoCompleteTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91431B413E8AE70162F8F1EC /* libPods-DSKAutoCompleteTests.a */; };
 		7E1857F21AEF957800EF5781 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E1857F11AEF957800EF5781 /* main.m */; };
 		7E1857F51AEF957800EF5781 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E1857F41AEF957800EF5781 /* AppDelegate.m */; };
@@ -38,6 +39,8 @@
 		1C6AA04A1AF0F5CA00C2FFBB /* DSKAutoCompleteDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSKAutoCompleteDropDownMenu.m; sourceTree = "<group>"; };
 		1C6AA04C1AF0F6A700C2FFBB /* DSKAutoCompleteKeyboardMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSKAutoCompleteKeyboardMenu.h; sourceTree = "<group>"; };
 		1C6AA04D1AF0F6A700C2FFBB /* DSKAutoCompleteKeyboardMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSKAutoCompleteKeyboardMenu.m; sourceTree = "<group>"; };
+		1CC3EDA71AFB069700AB6008 /* DSKAutoCompleteOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSKAutoCompleteOperation.h; sourceTree = "<group>"; };
+		1CC3EDA81AFB069700AB6008 /* DSKAutoCompleteOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSKAutoCompleteOperation.m; sourceTree = "<group>"; };
 		7E1857EC1AEF957800EF5781 /* DSKAutoComplete.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DSKAutoComplete.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E1857F01AEF957800EF5781 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E1857F11AEF957800EF5781 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 				7E1858281AF07A6300EF5781 /* DSKAutoCompleteTextField.m */,
 				7E18581C1AEF960500EF5781 /* DSKAutoCompleteQuickMenu.h */,
 				7E18581D1AEF960500EF5781 /* DSKAutoCompleteQuickMenu.m */,
+				1CC3EDA71AFB069700AB6008 /* DSKAutoCompleteOperation.h */,
+				1CC3EDA81AFB069700AB6008 /* DSKAutoCompleteOperation.m */,
 				1C6AA0491AF0F5CA00C2FFBB /* DSKAutoCompleteDropDownMenu.h */,
 				1C6AA04A1AF0F5CA00C2FFBB /* DSKAutoCompleteDropDownMenu.m */,
 				1C6AA04C1AF0F6A700C2FFBB /* DSKAutoCompleteKeyboardMenu.h */,
@@ -325,6 +330,7 @@
 				7E1857F21AEF957800EF5781 /* main.m in Sources */,
 				7E1858291AF07A6300EF5781 /* DSKAutoCompleteTextField.m in Sources */,
 				7E18581F1AEF960500EF5781 /* DSKAutoCompleteQuickMenu.m in Sources */,
+				1CC3EDA91AFB069700AB6008 /* DSKAutoCompleteOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

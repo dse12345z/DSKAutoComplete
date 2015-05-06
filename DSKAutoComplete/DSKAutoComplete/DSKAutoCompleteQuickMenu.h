@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DSKAutoCompleteOperation.h"
 
 #define DSKQuicklyMenuHeight 90
 
@@ -17,7 +18,7 @@ typedef enum {
 
 @protocol DSKAutoCompleteQuickMenuDelegate;
 
-@interface DSKAutoCompleteQuickMenu : NSObject <UITableViewDelegate, UITableViewDataSource>
+@interface DSKAutoCompleteQuickMenu : NSObject <UITableViewDelegate, UITableViewDataSource, DSKAutoCompleteOperationDelegate>
 
 @property (nonatomic, weak) id <DSKAutoCompleteQuickMenuDelegate> delegate;
 @property (nonatomic, strong) UITableView *quickMenu;

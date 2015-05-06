@@ -14,10 +14,7 @@
 @interface DSKAutoCompleteQuickMenu ()
 
 @property (nonatomic, strong) NSArray *results;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;
-@property (nonatomic, strong) dispatch_queue_t pendingQueue;
-@property (nonatomic, strong) dispatch_queue_t workQueue;
-@property (nonatomic, assign) int pendingJobCount;
+@property (nonatomic, strong) NSOperationQueue *quickQueue;
 
 @end
 
@@ -25,6 +22,16 @@
 
 - (UITextField *)currentTextField {
 	return (UITextField *)self.delegate;
+}
+
+#pragma mark - life cycle
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.quickQueue = [NSOperationQueue new];
+    }
+    return self;
 }
 
 #pragma mark - instance method
@@ -40,10 +47,6 @@
 	self.quickMenu.layer.borderColor = [UIColor grayColor].CGColor;
 	self.quickMenu.separatorStyle = UITableViewCellSeparatorStyleNone;
 	[self.quickMenu registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DSKAutoCompleteQuickMenu"];
-
-	self.semaphore = dispatch_semaphore_create(1);
-	self.pendingQueue = [self queueCreate:"pendingQueue" dispatchAttr:DISPATCH_QUEUE_SERIAL];
-	self.workQueue = [self queueCreate:"workQueue" dispatchAttr:DISPATCH_QUEUE_SERIAL];
 }
 
 - (void)hidden {
@@ -55,41 +58,12 @@
 }
 
 - (void)refreshDataUsing:(NSMutableDictionary *)dataSource {
-	self.pendingJobCount++;
-
-	dispatch_async(self.pendingQueue, ^{
-		dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
-		dispatch_async(self.workQueue, ^{
-			if ([self currentTextField].text.length != 0 && self.pendingJobCount == 1) {
-			    //用來保存需要的 key。
-			    NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:dataSource];
-
-			    NSPredicate *pred = [NSPredicate predicateWithFormat:[self predicateStr]];
-			    [dataSource keysOfEntriesPassingTest: ^(id key, NSDictionary *info, BOOL *stop) {
-			        //模糊搜尋 array 裡的每個 string，count > 0 表示這個 key 是需要的。
-			        if ([info[@"tags"] filteredArrayUsingPredicate:pred].count > 0 && self.pendingJobCount == 1) {
-			            return YES;
-					}
-
-			        //模糊搜尋找不到，移除這個 key。
-			        [cacheDic removeObjectForKey:key];
-			        return NO;
-				}];
-
-			    if (self.pendingJobCount == 1 && cacheDic.allKeys > 0) {
-			        //將所有 key 按照權重排序。
-			        self.results = [self sortAllKeys:cacheDic];
-				}
-			}
-
-			//做最後確認
-			if ([self currentTextField].text.length == 0 || self.pendingJobCount > 1) {
-			    self.results = [NSArray array];
-			}
-
-			[self updataUI];
-		});
-	});
+    [self.quickQueue cancelAllOperations];
+    DSKAutoCompleteOperation *newOperation = [DSKAutoCompleteOperation new];
+    newOperation.currentTextField = [self currentTextField];
+    newOperation.dataSource = dataSource;
+    newOperation.delegate = self;
+    [self.quickQueue addOperation:newOperation];
 }
 
 #pragma mark - private method
@@ -123,30 +97,11 @@
 	return dataStr;
 }
 
-#pragma mark - refreshDataUsing private method
+#pragma mark - DSKAutoCompleteOperationDelegate
 
-- (NSArray *)sortAllKeys:(NSMutableDictionary *)cacheDic {
-	return [cacheDic keysSortedByValueUsingComparator: ^NSComparisonResult (id obj1, id obj2) {
-	    return [obj2[@"weight"] compare:obj1[@"weight"]];
-	}];
-}
-
-- (NSString *)predicateStr {
-	//建立模糊搜尋語法。
-	NSString *predicateStr = @"SELF like[cd] '*";
-	for (int i = 0; i < self.currentTextField.text.length; i++) {
-		predicateStr = [NSString stringWithFormat:@"%@%@*", predicateStr, [[self currentTextField].text substringWithRange:NSMakeRange(i, 1)]];
-	}
-	predicateStr = [NSString stringWithFormat:@"%@'", predicateStr];
-	return predicateStr;
-}
-
-- (void)updataUI {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self.quickMenu reloadData];
-		self.pendingJobCount--;
-		dispatch_semaphore_signal(self.semaphore);
-	});
+- (void)updatingResult:(NSArray *)result {
+    self.results = result;
+    [self.quickMenu reloadData];
 }
 
 #pragma mark - tableView Delegate
@@ -192,14 +147,6 @@
 		cell.textLabel.text = self.results[indexPath.row];
 	}
 	return cell;
-}
-
-#pragma mark - queue create method
-
-- (dispatch_queue_t)queueCreate:(const char *)label dispatchAttr:(dispatch_queue_attr_t)attr {
-	dispatch_queue_t queue = dispatch_queue_create(label, attr);
-	dispatch_queue_set_specific(queue, _cmd, (__bridge void *)queue, NULL);
-	return queue;
 }
 
 @end
