@@ -11,7 +11,6 @@
 @interface DSKAutoCompleteTextField ()
 
 @property (nonatomic, strong) DSKAutoCompleteQuickMenu *quickMenu;
-@property (nonatomic, strong) NSOperationQueue *pending;
 
 @end
 
@@ -68,8 +67,6 @@
 - (void)initSettings {
 	[self addObserver:self forKeyPath:@"style" options:NSKeyValueObservingOptionNew context:nil];
 	self.dataSource = [NSMutableDictionary dictionary];
-	self.pending = [[NSOperationQueue alloc] init];
-	self.pending.MaxConcurrentOperationCount = 1;
 
 	self.delegate = self;
 	self.returnKeyType = UIReturnKeyDone;
@@ -92,12 +89,7 @@
 }
 
 - (void)textFieldDidChange:(DSKAutoCompleteTextField *)textField {
-    [self.pending cancelAllOperations];
-    __weak typeof(self) weakSelf = self;
-    
-    [self.pending addOperationWithBlock: ^{
-        [weakSelf.quickMenu refreshDataUsing:weakSelf.dataSource];
-    }];
+    [self.quickMenu refreshDataUsing:self.dataSource];
 }
 
 - (BOOL)textFieldShouldReturn:(DSKAutoCompleteTextField *)textField {

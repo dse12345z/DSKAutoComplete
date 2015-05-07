@@ -8,12 +8,16 @@
 
 #import "DSKAutoCompleteOperation.h"
 
+#define DSKCheckOperationIsCancelled(code) if ([self isCancelled]) { code; return; }
+
 @implementation DSKAutoCompleteOperation
 
 #pragma mark - methods to override
 
 - (void)main {
-    NSArray *returnArray = nil;
+    DSKCheckOperationIsCancelled()
+    
+    NSArray * returnArray = nil;
     //長度大於零才搜尋
     if (self.currentTextField.text.length > 0) {
         //建立模糊搜尋語法。
@@ -21,11 +25,15 @@
         
         NSMutableDictionary *cacheDic = [NSMutableDictionary dictionaryWithDictionary:self.dataSource];
         [cacheDic enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
+            DSKCheckOperationIsCancelled(*stop = YES)
+            
             //搜尋 key 底下所有 value，count 等於零表示沒有搜尋到所以將其移除。
             if ([obj[@"tags"] filteredArrayUsingPredicate:pred].count == 0) {
                 [cacheDic removeObjectForKey:key];
             }
         }];
+        
+        DSKCheckOperationIsCancelled()
         
         //取 dictionary 所有 key，大於零才做排序（按照權重排序）。
         if (cacheDic.allKeys > 0) {
