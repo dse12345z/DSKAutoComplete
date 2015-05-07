@@ -69,32 +69,29 @@
 #pragma mark - private method
 
 - (NSMutableAttributedString *)drawColorString:(NSString *)oStr ruleString:(NSString *)rStr {
-	NSMutableAttributedString *dataStr = [[NSMutableAttributedString alloc] initWithString:oStr];
-
-	//將規則字串拆開
-	NSMutableArray *array = [NSMutableArray array];
-	for (int i = 0; i < rStr.length; i++) {
-		[array addObject:[rStr substringWithRange:NSMakeRange(i, 1)]];
-	}
-
-	int rStrIndex = 0; //規則字串的單字索引
-
-	for (int i = 0; i < oStr.length; i++) {
-		//比較兩個字是否一樣，一樣就上色。
-		if ([[oStr substringWithRange:NSMakeRange(i, 1)] caseInsensitiveCompare:array[rStrIndex]] == NSOrderedSame) {
-			NSRange range = NSMakeRange(i, 1);
-			[dataStr addAttribute:NSForegroundColorAttributeName
-			                value:[UIColor redColor]
-			                range:NSMakeRange(range.location, range.length)];
-			rStrIndex++;
-		}
-
-		//規則字串的單字索引等於規則字串就返回
-		if (rStrIndex == rStr.length) {
-			break;
-		}
-	}
-	return dataStr;
+    NSMutableAttributedString *dataStr = [[NSMutableAttributedString alloc] initWithString:oStr];
+    
+    int rStrIndex = 0; //規則字串的單字索引
+    
+    for (int i = 0; i < oStr.length; i++) {
+        NSRange currentWordRange = NSMakeRange(i, 1);
+        NSString *rStrOneWord = [rStr substringWithRange:NSMakeRange(rStrIndex, 1)];
+        NSString *oStrOneWord = [oStr substringWithRange:currentWordRange];
+        
+        //比較兩個字是否一樣，一樣就上色。
+        if ([oStrOneWord caseInsensitiveCompare:rStrOneWord] == NSOrderedSame) {
+            [dataStr addAttribute:NSForegroundColorAttributeName
+                            value:[UIColor redColor]
+                            range:NSMakeRange(currentWordRange.location, currentWordRange.length)];
+            rStrIndex++;
+        }
+        
+        //規則字串的單字索引等於規則字串就返回
+        if (rStrIndex == rStr.length) {
+            break;
+        }
+    }
+    return dataStr;
 }
 
 #pragma mark - DSKAutoCompleteOperationDelegate
